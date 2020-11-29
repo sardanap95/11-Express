@@ -10,7 +10,7 @@ app.use(express.json());
 
 app.get("/api/notes", (req, res) => {
   console.log("Fetching notes.");
-  notes ? res.json(JSON.parse(data)) : res.json([{ title: "No notes." }]);
+  notes ? res.json(notes) : res.json([{ title: "No notes." }]);
 });
 
 app.post("/api/notes", (req, res) => {
@@ -18,24 +18,24 @@ app.post("/api/notes", (req, res) => {
   let newNote = req.body;
   newNote.id = notes.length.toString();
   notes.push(newNote);
-  fs.writeFileSync("./db/db.json", JSON.stringify(data), function (err) {
+  fs.writeFileSync("./db/db.json", JSON.stringify(notes), function (err) {
     err ? res.json("Failed to add note." + err) : res.json(notes);
   });
 });
 
-app.delete("/api/notes", (req, res) => {
-  console.log(`Deleting note with id ${noteId}`);
+app.delete("/api/notes/:id", (req, res) => {
   let noteId = req.params.id;
-  let newID = 0;
+  console.log(`Deleting note with id ${noteId}`);
+  let newId = 0;
   notes = notes.filter((currentNote) => {
     return currentNote.id != noteId;
   });
   for (currentNote of notes) {
     currentNote.id = newId.toString();
-    newID++;
+    newId++;
   }
-  fs.writeFileSync("./db/db.json", JSON.stringify(data));
-  res.json(data);
+  fs.writeFileSync("./db/db.json", JSON.stringify(notes));
+  res.json(notes);
 });
 
 app.get("/", function (req, res) {
