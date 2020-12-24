@@ -7,9 +7,10 @@ const app = express();
 var port = process.env.PORT || 9999;
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use("/assets", express.static("./public/assets"));
 
 app.get("/api/notes", (req, res) => {
-  console.log("Fetching notes.");
+  console.log("Fetching " + notes.length + " notes.");
   notes ? res.json(notes) : res.json([{ title: "No notes." }]);
 });
 
@@ -21,6 +22,7 @@ app.post("/api/notes", (req, res) => {
   fs.writeFileSync("./db/db.json", JSON.stringify(notes), function (err) {
     err ? res.json("Failed to add note." + err) : res.json(notes);
   });
+  res.json(notes);
 });
 
 app.delete("/api/notes/:id", (req, res) => {
